@@ -35,6 +35,12 @@ if __name__ == "__main__":
     csv_path = Path(__file__).parent / CSV_FILE
     habits = read_habits(csv_path)
 
+    habits = read_habits(csv_path)
+
     print(f"Loaded {len(habits)} habits:\n")
     for h in habits:
         print(f"{h['User']:<8} {h['Habit']:<25} {h['Category']:<12} streak: {h['Streak']}")
+        print("nTotal streak days: ", sum(h["Streak"] for h in habits))
+
+
+
