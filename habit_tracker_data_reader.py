@@ -40,6 +40,7 @@ if __name__ == "__main__":
     print(f"Loaded {len(habits)} habits:\n")
     for h in habits:
         print(f"{h['User']:<8} {h['Habit']:<25} {h['Category']:<12} streak: {h['Streak']}")
+        
         print("nTotal streak days: ", sum(h["Streak"] for h in habits))
 
 
