@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Habit Trackz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<!-- ======================= AUTH ======================= -->
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-card">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12.5 9.5 18 20 6"/></svg>
+      </div>
+      <div>
+        <h1>Habit Trackz</h1>
+        <p class="brand-sub">Kleine Siege, jeden Tag.</p>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab is-active" data-auth-tab="login" role="tab">Anmelden</button>
+      <button class="tab" data-auth-tab="register" role="tab">Registrieren</button>
+    </div>
+
+    <!-- Login -->
+    <form id="login-form" class="auth-form" novalidate>
+      <label class="field">
+        <span>E-Mail</span>
+        <input type="email" name="email" autocomplete="email" placeholder="du@hochschule.de" required />
+      </label>
+      <label class="field">
+        <span>Passwort</span>
+        <input type="password" name="password" autocomplete="current-password" placeholder="••••••••" required />
+      </label>
+      <p class="form-error" id="login-error" role="alert" hidden></p>
+      <button type="submit" class="btn btn-primary btn-block">Anmelden</button>
+      <button type="button" class="btn btn-ghost btn-block" id="demo-login">Mit Demo-Konto ansehen</button>
+    </form>
+
+    <!-- Registrierung -->
+    <form id="register-form" class="auth-form" hidden novalidate>
+      <label class="field">
+        <span>Name</span>
+        <input type="text" name="name" autocomplete="name" placeholder="Vorname Nachname" required />
+      </label>
+      <label class="field">
+        <span>E-Mail</span>
+        <input type="email" name="email" autocomplete="email" placeholder="du@hochschule.de" required />
+      </label>
+      <label class="field">
+        <span>Geburtstag</span>
+        <input type="date" name="birthday" />
+      </label>
+      <label class="field">
+        <span>Passwort</span>
+        <input type="password" name="password" autocomplete="new-password" placeholder="min. 8 Zeichen, 1 Ziffer" required />
+        <small class="hint">Mindestens 8 Zeichen und eine Ziffer oder ein Sonderzeichen.</small>
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" name="demo" checked />
+        <span>Beispiel-Gewohnheiten mit Verlauf anlegen</span>
+      </label>
+      <p class="form-error" id="register-error" role="alert" hidden></p>
+      <button type="submit" class="btn btn-primary btn-block">Konto erstellen</button>
+    </form>
+
+    <p class="auth-note">Alle Daten bleiben lokal in diesem Browser gespeichert.</p>
+  </div>
+</div>
+
+<!-- ======================= APP ======================= -->
+<div id="app" class="app" hidden>
+
+  <header class="topbar">
+    <div class="brand brand-sm">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12.5 9.5 18 20 6"/></svg>
+      </div>
+      <div>
+        <strong>Habit Trackz</strong>
+        <span class="topbar-view" id="view-label">Dashboard</span>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="theme-toggle" title="Hell / Dunkel umschalten" aria-label="Design umschalten">🌙</button>
+      <button class="icon-btn avatar" id="account-btn" aria-label="Konto">👤</button>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <!-- ---------- Dashboard ---------- -->
+    <section class="view" id="view-dashboard">
+      <p class="eyebrow">Tagesübersicht</p>
+      <h2 class="page-title" id="today-title">Heute</h2>
+
+      <div class="card week-strip" id="week-strip"></div>
+
+      <div class="card momentum">
+        <div class="momentum-text">
+          <p class="eyebrow">Momentum</p>
+          <p class="big-number"><span id="consistency-value">0</span><span class="percent">%</span> <span class="muted">Konsistenz</span></p>
+          <p class="streak-line">🔥 <span id="best-streak">0</span> Tage längster aktiver Streak</p>
+        </div>
+        <div class="ring-wrap">
+          <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+            <circle class="ring-track" cx="60" cy="60" r="52" />
+            <circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="52" />
+          </svg>
+          <span class="ring-label" id="ring-label">0/0</span>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat stat-done">
+          <span class="stat-icon">✓</span>
+          <div><p class="stat-label">Erledigt</p><p class="stat-value" id="count-done">0 Habits</p></div>
+        </div>
+        <div class="stat stat-todo">
+          <span class="stat-icon">◷</span>
+          <div><p class="stat-label">Offen</p><p class="stat-value" id="count-todo">0 Habits</p></div>
+        </div>
+      </div>
+
+      <div class="card quote">
+        <p class="eyebrow accent">Gedanke des Tages</p>
+        <p class="quote-text" id="quote-text">Kleine Erfolge summieren sich leise zu großen Veränderungen.</p>
+      </div>
+
+      <div class="section-head">
+        <h3>Heute fällig <span class="pill" id="today-total">0</span></h3>
+        <button class="link-btn" data-nav="habits">Alle ansehen →</button>
+      </div>
+      <div id="today-open"></div>
+
+      <details class="done-section" id="done-section" open>
+        <summary>Erledigt <span class="pill" id="done-count-pill">0</span></summary>
+        <div id="today-done"></div>
+      </details>
+
+      <div class="card cta" id="cta-create">
+        <div class="cta-icon">＋</div>
+        <div class="cta-text">
+          <strong>Neue Gewohnheit anlegen</strong>
+          <span>In unter 20 Sekunden eingerichtet</span>
+        </div>
+        <button class="btn btn-primary" data-open-editor>Erstellen</button>
+      </div>
+
+      <div class="card">
+        <div class="section-head tight">
+          <h3>Konsistenz der letzten 12 Wochen</h3>
+        </div>
+        <div class="heatmap" id="heatmap"></div>
+        <div class="heatmap-legend">
+          <span>weniger</span>
+          <i class="hm-cell level-0"></i><i class="hm-cell level-1"></i><i class="hm-cell level-2"></i><i class="hm-cell level-3"></i><i class="hm-cell level-4"></i>
+          <span>mehr</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- Habits ---------- -->
+    <section class="view" id="view-habits" hidden>
+      <p class="eyebrow">Übersicht</p>
+      <h2 class="page-title">Alle Gewohnheiten</h2>
+
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="search" id="habit-search" placeholder="Gewohnheit suchen…" aria-label="Gewohnheiten durchsuchen" />
+      </div>
+
+      <div class="chips" id="category-chips"></div>
+
+      <div id="habit-groups"></div>
+
+      <div class="empty" id="habits-empty" hidden>
+        <p>Keine Gewohnheit gefunden.</p>
+        <button class="btn btn-primary" data-open-editor>Neue Gewohnheit</button>
+      </div>
+    </section>
+
+    <!-- ---------- Account ---------- -->
+    <section class="view" id="view-account" hidden>
+      <p class="eyebrow">Profil</p>
+      <h2 class="page-title">Konto</h2>
+
+      <div class="card profile">
+        <div class="profile-avatar" id="profile-initials">··</div>
+        <div>
+          <strong id="profile-name">—</strong>
+          <span class="muted" id="profile-email">—</span>
+          <span class="muted" id="profile-birthday"></span>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="card mini-stat"><p class="mini-value" id="stat-habits">0</p><p class="mini-label">Gewohnheiten</p></div>
+        <div class="card mini-stat"><p class="mini-value" id="stat-completions">0</p><p class="mini-label">Abhakungen</p></div>
+        <div class="card mini-stat"><p class="mini-value" id="stat-longest">0</p><p class="mini-label">Längster Streak</p></div>
+        <div class="card mini-stat"><p class="mini-value" id="stat-consistency">0%</p><p class="mini-label">Konsistenz 30 T.</p></div>
+      </div>
+
+      <div class="card settings">
+        <h3>Einstellungen</h3>
+        <label class="switch-row">
+          <span><strong>Dunkles Design</strong><small>Schwarz mit blauen Akzenten</small></span>
+          <input type="checkbox" id="setting-theme" class="switch" />
+        </label>
+        <label class="switch-row">
+          <span><strong>Ton beim Abhaken</strong><small>Kurzes „Pling“ als Bestätigung</small></span>
+          <input type="checkbox" id="setting-sound" class="switch" />
+        </label>
+        <label class="switch-row">
+          <span><strong>Erinnerungen</strong><small>Benachrichtigungen vor der geplanten Zeit</small></span>
+          <input type="checkbox" id="setting-notifications" class="switch" />
+        </label>
+      </div>
+
+      <div class="card settings">
+        <h3>Daten</h3>
+        <div class="button-row">
+          <button class="btn btn-ghost" id="export-data">Daten als JSON kopieren</button>
+          <button class="btn btn-ghost" id="seed-data">Demo-Daten neu laden</button>
+          <button class="btn btn-danger-ghost" id="logout-btn">Abmelden</button>
+        </div>
+      </div>
+      <p class="auth-note">Habit Trackz · Einführung in Software Engineering</p>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-item is-active" data-nav="dashboard"><span>▦</span>Dashboard</button>
+    <button class="nav-item" data-nav="habits"><span>☰</span>Habits</button>
+    <button class="fab" data-open-editor aria-label="Neue Gewohnheit">＋</button>
+    <button class="nav-item" data-nav="account"><span>👤</span>Konto</button>
+  </nav>
+</div>
+
+<!-- ======================= EDITOR ======================= -->
+<div class="sheet-backdrop" id="editor-backdrop" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="editor-title">
+    <header class="sheet-head">
+      <button class="btn btn-ghost btn-sm" id="editor-cancel">Abbrechen</button>
+      <h3 id="editor-title">Neue Gewohnheit</h3>
+      <button class="btn btn-primary btn-sm" id="editor-save">Speichern</button>
+    </header>
+
+    <form id="habit-form" class="sheet-body" novalidate>
+      <input type="hidden" name="id" />
+
+      <label class="field">
+        <span>Name <em class="req">Pflichtfeld</em></span>
+        <input type="text" name="name" placeholder="z. B. 15 min Meditation" required />
+      </label>
+
+      <div class="field">
+        <span>Kategorie</span>
+        <div class="chips" id="editor-categories"></div>
+      </div>
+
+      <div class="field">
+        <span>Symbol</span>
+        <div class="icon-grid" id="editor-icons"></div>
+      </div>
+
+      <div class="grid-2">
+        <label class="field">
+          <span>Uhrzeit</span>
+          <input type="time" name="time" value="08:00" />
+        </label>
+        <label class="field">
+          <span>Dauer (Minuten)</span>
+          <input type="number" name="duration" min="1" max="600" value="15" />
+        </label>
+      </div>
+
+      <div class="field">
+        <span>Erinnerung</span>
+        <div class="chips" id="editor-reminders"></div>
+      </div>
+
+      <div class="field">
+        <span>Wiederholung</span>
+        <div class="chips" id="editor-presets"></div>
+        <div class="day-row" id="editor-days"></div>
+      </div>
+
+      <div class="grid-2">
+        <label class="field">
+          <span>Ziel (optional)</span>
+          <input type="number" name="target" min="1" placeholder="z. B. 2500" />
+        </label>
+        <label class="field">
+          <span>Einheit</span>
+          <input type="text" name="unit" placeholder="ml, Seiten, …" />
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Notizen</span>
+        <textarea name="notes" rows="3" maxlength="200" placeholder="z. B. direkt nach dem Kaffee"></textarea>
+      </label>
+
+      <p class="form-error" id="editor-error" role="alert" hidden></p>
+
+      <button type="button" class="btn btn-danger-ghost btn-block" id="editor-delete" hidden>Gewohnheit löschen</button>
+    </form>
+  </div>
+</div>
+
+<!-- Bestaetigungsdialog (ersetzt confirm(), das in eingebetteten Seiten nicht laeuft) -->
+<div class="confirm-backdrop" id="confirm-backdrop" hidden>
+  <div class="confirm-box" role="alertdialog" aria-modal="true" aria-labelledby="confirm-text">
+    <p id="confirm-text"></p>
+    <div class="confirm-actions">
+      <button type="button" class="btn btn-ghost" id="confirm-no">Abbrechen</button>
+      <button type="button" class="btn btn-danger-ghost" id="confirm-yes">Bestätigen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Snackbar fuer Undo -->
+<div class="snackbar" id="snackbar" hidden>
+  <span id="snackbar-text"></span>
+  <button class="snackbar-action" id="snackbar-action">Rückgängig</button>
+</div>
+
+<script src="js/streak.js"></script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
